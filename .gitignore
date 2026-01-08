@@ -1,0 +1,14 @@
+# private / restricted unit docs
+docs_private/
+*.env
+
+# python
+.venv/
+__pycache__/
+*.pyc
+
+# vector index
+storage/
+index/
+*.faiss
+*.pkl
