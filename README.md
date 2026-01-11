@@ -32,15 +32,6 @@ Goal is to keep it lightweight first, then improve it later.
 4. Save vectors into FAISS
 5. For a query: embed query → hybrid retrieval → display evidence with citations
 
-## Run locally (Windows)
-```bash
-python -m venv .venv
-.\.venv\Scripts\activate
-pip install -r requirements.txt
-
-python ingest.py
-streamlit run app.py
-
 ## Screenshots (demo)
 ### UI + Hybrid Controls
 ![UI Home](assets/ui_home.png)
@@ -53,3 +44,13 @@ streamlit run app.py
 
 ### Low-confidence warning (question not in docs)
 ![Low Confidence](assets/demo_low_confidence.png)
+
+## Run locally (Windows)
+```bash
+python -m venv .venv
+.\.venv\Scripts\activate
+pip install -r requirements.txt
+
+python ingest.py
+streamlit run app.py
+
