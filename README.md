@@ -9,6 +9,8 @@ Goal is to keep it lightweight first, then improve it later.
 - Convert chunks into embeddings (SentenceTransformers)
 - Store embeddings in a FAISS index for fast semantic search
 - Streamlit UI to query and show top-k cited evidence
+- Shows a Final Answer extracted from top evidence
+- Warns on low-confidence retrieval
 
 ## Tech used
 - Python

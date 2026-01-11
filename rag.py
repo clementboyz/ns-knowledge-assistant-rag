@@ -8,8 +8,26 @@ from sentence_transformers import SentenceTransformer
 INDEX_DIR = "index"
 EMB_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 
+# simple module-level cache (so we don't reload every query)
+_MODEL = None
+_INDEX = None
+_CHUNKS = None
+_METAS = None
 
-def load_index():
+
+def _get_model():
+    global _MODEL
+    if _MODEL is None:
+        _MODEL = SentenceTransformer(EMB_MODEL_NAME)
+    return _MODEL
+
+
+def _load_index_once():
+    global _INDEX, _CHUNKS, _METAS
+
+    if _INDEX is not None:
+        return _INDEX, _CHUNKS, _METAS
+
     import faiss
     faiss_index_path = os.path.join(INDEX_DIR, "docs.faiss")
     store_path = os.path.join(INDEX_DIR, "store.pkl")
@@ -17,16 +35,19 @@ def load_index():
     if not (os.path.exists(faiss_index_path) and os.path.exists(store_path)):
         raise RuntimeError("Index not found. Run python ingest.py first.")
 
-    index = faiss.read_index(faiss_index_path)
+    _INDEX = faiss.read_index(faiss_index_path)
+
     with open(store_path, "rb") as f:
         store = pickle.load(f)
 
-    return index, store["chunks"], store["metas"]
+    _CHUNKS = store["chunks"]
+    _METAS = store["metas"]
+    return _INDEX, _CHUNKS, _METAS
 
 
 def retrieve(query: str, k: int = 5) -> List[Dict[str, Any]]:
-    index, chunks, metas = load_index()
-    model = SentenceTransformer(EMB_MODEL_NAME)
+    index, chunks, metas = _load_index_once()
+    model = _get_model()
 
     q = model.encode([query], normalize_embeddings=True)
     q = np.asarray(q, dtype="float32")
@@ -36,9 +57,16 @@ def retrieve(query: str, k: int = 5) -> List[Dict[str, Any]]:
     for score, idx in zip(scores[0], ids[0]):
         if idx == -1:
             continue
-        results.append({
-            "score": float(score),
-            "text": chunks[idx],
-            "meta": metas[idx],
-        })
+        results.append(
+            {
+                "score": float(score),
+                "text": chunks[idx],
+                "meta": metas[idx],
+            }
+        )
     return results
+
+def is_low_confidence(results: List[Dict[str, Any]], threshold: float = 0.25) -> bool:
+    if not results:
+        return True
+    return results[0]["score"] < threshold
