@@ -17,7 +17,7 @@ if st.button("Search") and query.strip():
     with st.spinner("Retrieving..."):
         results = retrieve_hybrid(query.strip(), k=top_k, alpha=alpha)
 
-    low_conf = is_low_confidence(results, threshold=0.25)
+    low_conf = is_low_confidence(query.strip(), results, threshold=0.25, min_coverage=0.5)
 
     st.subheader("Final Answer (Extracted from Evidence)")
     if low_conf:

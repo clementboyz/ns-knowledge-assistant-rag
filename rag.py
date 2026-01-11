@@ -164,7 +164,45 @@ def retrieve_hybrid(query: str, k: int = 5, alpha: float = 0.65) -> List[Dict[st
     return merged[:k]
 
 
-def is_low_confidence(results: List[Dict[str, Any]], threshold: float = 0.25) -> bool:
+import re
+
+def _tokenize_simple(text: str):
+    return re.findall(r"[a-z0-9]+", text.lower())
+
+def is_low_confidence(query: str, results, threshold: float = 0.25, min_coverage: float = 0.5) -> bool:
+    """
+    Better low-confidence heuristic:
+    - score threshold (basic)
+    - token coverage between query and top evidence
+    - intent check: if question asks for duration/limit/max but evidence has no time/number signals
+    """
     if not results:
         return True
-    return results[0]["score"] < threshold
+
+    top = results[0]
+    top_score = float(top.get("score", 0.0))
+    if top_score < threshold:
+        return True
+
+    evidence_text = (top.get("text") or "").lower()
+
+    # remove weak tokens / stopwords (small list)
+    stop = {"what","is","the","a","an","to","of","and","or","in","on","for","when","how","do","does","are","must","be"}
+    q_tokens = [t for t in _tokenize_simple(query) if t not in stop]
+
+    if q_tokens:
+        hits = sum(1 for t in set(q_tokens) if t in evidence_text)
+        coverage = hits / max(len(set(q_tokens)), 1)
+        if coverage < min_coverage:
+            return True
+
+    # Intent: duration/limit/max questions should show warning if evidence has no numbers/time units
+    duration_intent_words = {"max","maximum","limit","duration","how","long","days","weeks","months","hours"}
+    if any(w in _tokenize_simple(query) for w in duration_intent_words):
+        has_time_or_number = bool(re.search(r"\b(\d+)\b", evidence_text)) or any(
+            u in evidence_text for u in ["day", "days", "week", "weeks", "month", "months", "hour", "hours"]
+        )
+        if not has_time_or_number:
+            return True
+
+    return False
