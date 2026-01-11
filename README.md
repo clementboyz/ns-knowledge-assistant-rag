@@ -9,8 +9,9 @@ Goal is to keep it lightweight first, then improve it later.
 - Convert chunks into embeddings (SentenceTransformers)
 - Store embeddings in a FAISS index for fast semantic search
 - Streamlit UI to query and show top-k cited evidence
-- Shows a Final Answer extracted from top evidence
-- Warns on low-confidence retrieval
+- Show a **Final Answer** extracted from top evidence (no hallucination)
+- Warn on **low-confidence retrieval**
+- **Hybrid retrieval** (vector + keyword) for more robust search across different query styles
 
 ## Tech used
 - Python
@@ -19,13 +20,17 @@ Goal is to keep it lightweight first, then improve it later.
 - FAISS (vector search)
 - PyPDF (PDF reader)
 
+## Included sample docs
+- SOP sample (borrow/return flow)
+- FAQ sample (common questions + what to record)
+- Checklist sample (admin steps + incident handling)
 
 ## How it works (high level)
 1. Load docs from `docs_public/`
 2. Chunk text with overlap
 3. Embed each chunk into vectors
 4. Save vectors into FAISS
-5. For a query: embed query → retrieve nearest chunks → display results with citations
+5. For a query: embed query → hybrid retrieval → display evidence with citations
 
 ## Run locally (Windows)
 ```bash
