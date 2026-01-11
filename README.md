@@ -43,13 +43,13 @@ streamlit run app.py
 
 ## Screenshots (demo)
 ### UI + Hybrid Controls
-![UI Home](assets/ui_home.png)
+![UI Home](.assets/ui_home.png)
 
 ### Example 1: FAQ retrieval (what to record)
-![FAQ Demo](assets/demo_faq_borrow_info.png)
+![FAQ Demo](.assets/demo_faq_borrow_info.png)
 
 ### Example 2: SOP retrieval (borrow/return steps)
-![SOP Demo](assets/demo_sop_return_steps.png)
+![SOP Demo](.assets/demo_sop_return_steps.png)
 
 ### Low-confidence warning (question not in docs)
-![Low Confidence](assets/demo_low_confidence.png)
+![Low Confidence](.assets/demo_low_confidence.png)
