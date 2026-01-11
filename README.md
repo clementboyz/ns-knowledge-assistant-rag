@@ -21,13 +21,13 @@ Goal is to keep it lightweight first, then improve it later.
 
 ## Folder structure
 rag-knowledge-assistant/
-├─ app.py # Streamlit UI
-├─ ingest.py # Build FAISS index from docs_public/
-├─ rag.py # Retrieval logic
-├─ requirements.txt
-├─ eval_public.md # Simple evaluation checklist
-├─ docs_public/ # Example docs for demo
-└─ docs_private/ # Local docs (ignored by git)
+─ app.py # Streamlit UI
+─ ingest.py # Build FAISS index from docs_public/
+─ rag.py # Retrieval logic
+─ requirements.txt
+─ eval_public.md # Simple evaluation checklist
+─ docs_public/ # Example docs for demo
+─ docs_private/ # Local docs (ignored by git)
 
 
 ## How it works (high level)
